@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:readly/application/books/books_bloc.dart';
 import 'package:readly/application/books/books_event.dart';
 import 'package:readly/application/books/books_state.dart';
+import 'package:readly/application/bottom_nav/bottom_nav_cubit.dart';
 import 'package:readly/core/l10n/locale_keys.g.dart';
 import 'package:readly/core/notifications/notification_service.dart';
 import 'package:readly/domain/repositories/book_repository.dart';
@@ -12,12 +14,17 @@ import 'package:readly/presentation/book_detail_page.dart';
 import 'package:readly/presentation/favorites_page.dart';
 import 'package:readly/core/utils/extensions/locale_extension.dart';
 import 'package:readly/presentation/settings_page.dart';
+import 'package:readly/presentation/widgets/book_card.dart';
+import 'package:readly/presentation/widgets/custom_app_bar.dart';
+import 'package:readly/presentation/widgets/custom_bottom_nav_bar.dart';
 
 class BooksPage extends StatelessWidget {
   const BooksPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    int selectedIndex = 0;
+
     return BlocProvider(
       create: (_) {
         final apiService = BookApiService();
@@ -27,69 +34,54 @@ class BooksPage extends StatelessWidget {
       child: Builder(
         builder: (context) {
           return Scaffold(
-            appBar: AppBar(
-              title: Text(LocaleKeys.title.locale),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.favorite),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const FavoritesPage()),
-                    );
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.settings),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const SettingsPage()),
-                    );
-                  },
-                ),
-              ],
-            ),
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             body: Column(
               children: [
+                const CustomAppBar(
+                  title: 'Kitaplar',
+                ),
                 Padding(
-                  padding: const EdgeInsets.all(12.0),
+                  padding: EdgeInsets.all(12.r),
                   child: TextField(
-                    decoration: const InputDecoration(
-                      hintText: 'Kitap ara...',
-                      prefixIcon: Icon(Icons.search),
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      filled: true,
+                      hintText: LocaleKeys.search_books.locale,
+                      hintStyle: TextStyle(
+                        fontSize: 14.sp,
+                      ),
+                      prefixIcon: Padding(
+                        padding: EdgeInsets.all(10.r),
+                        child: Icon(Icons.search, size: 20.sp),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                        borderSide: BorderSide.none,
+                      ),
                     ),
                     onChanged: (value) {
                       context.read<BooksBloc>().add(SearchBooks(value));
                     },
                   ),
                 ),
-                const SizedBox(height: 12),
                 Expanded(
                   child: BlocBuilder<BooksBloc, BooksState>(
                     builder: (context, state) {
                       if (state is BooksLoading) {
                         return const Center(child: CircularProgressIndicator());
                       } else if (state is BooksLoaded) {
-                        return ListView.builder(
+                        return GridView.builder(
+                          padding: const EdgeInsets.all(12),
                           itemCount: state.books.length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 12,
+                            mainAxisSpacing: 12,
+                            childAspectRatio: 0.75,
+                          ),
                           itemBuilder: (context, index) {
                             final book = state.books[index];
-                            return ListTile(
-                              title: Text(book.title),
-                              subtitle:
-                                  Text('${book.year} - ${book.publisher}'),
-                              trailing: Text('${book.pages} sayfa'),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => BookDetailPage(book: book),
-                                  ),
-                                );
-                              },
-                            );
+                            return BookCard(book: book);
                           },
                         );
                       } else if (state is BooksError) {

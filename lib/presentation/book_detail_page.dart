@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive/hive.dart';
+import 'package:readly/core/constants/asset_constants/image_paths.dart';
 import 'package:readly/core/notifications/notification_service.dart';
 import 'package:readly/domain/entities/book.dart';
 
@@ -28,37 +30,25 @@ class _BookDetailPageState extends State<BookDetailPage> {
   }
 
   void toggleFavorite() async {
-    setState(() {
-      isFavorite = !isFavorite;
-    });
+    setState(() => isFavorite = !isFavorite);
 
     if (isFavorite) {
-      // Favorilere ekle
-      await favoritesBox.add(Book(
-        id: widget.book.id,
-        title: widget.book.title,
-        year: widget.book.year,
-        publisher: widget.book.publisher,
-        isbn: widget.book.isbn,
-        pages: widget.book.pages,
-        notes: List<String>.from(widget.book.notes),
-        createdAt: widget.book.createdAt,
-        villains: List<String>.from(widget.book.villains),
-      ));
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Favorilere eklendi')),
-      );
+      await favoritesBox.add(widget.book);
+      _showSnack('Favorilere eklendi');
     } else {
-      // Favorilerden kaldır
       final toRemove = favoritesBox.values.firstWhere(
         (b) => b.id == widget.book.id,
         orElse: () => throw Exception('Favorilerde bulunamadı'),
       );
       await toRemove.delete();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Favorilerden kaldırıldı')),
-      );
+      _showSnack('Favorilerden kaldırıldı');
     }
+  }
+
+  void _showSnack(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
+    );
   }
 
   @override
@@ -66,50 +56,113 @@ class _BookDetailPageState extends State<BookDetailPage> {
     final book = widget.book;
 
     return Scaffold(
-      appBar: AppBar(title: Text(book.title)),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: AppBar(
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          book.title,
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              isFavorite ? Icons.favorite : Icons.favorite_border,
+              color: isFavorite ? Colors.red : null,
+            ),
+            onPressed: toggleFavorite,
+          ),
+          if (isFavorite)
+            IconButton(
+              icon: const Icon(
+                Icons.notifications_active_outlined,
+              ),
+              onPressed: () {
+                NotificationService.scheduleDailyNotification(
+                  id: book.id,
+                  title: 'Kitap Hatırlatma!',
+                  body: '${book.title} kitabını okumayı unutma!',
+                );
+                _showSnack('Hatırlatma ayarlandı');
+              },
+            )
+          else
+            const SizedBox.shrink(),
+        ],
+      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Yıl: ${book.year}',
-                style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 8),
-            Text('Yayınevi: ${book.publisher}'),
-            const SizedBox(height: 8),
-            Text('ISBN: ${book.isbn}'),
-            const SizedBox(height: 8),
-            Text('Sayfa Sayısı: ${book.pages}'),
-            const SizedBox(height: 16),
-            Text('Notlar:', style: Theme.of(context).textTheme.titleMedium),
-            ...book.notes.map((note) => Text('- $note')).toList(),
-            const SizedBox(height: 16),
-            Text('Villains:', style: Theme.of(context).textTheme.titleMedium),
-            ...book.villains.map((v) => Text('- $v')).toList(),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: toggleFavorite,
-              child:
-                  Text(isFavorite ? 'Favorilerden Kaldır' : 'Favorilere Ekle'),
+            Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(
+                  ImagePaths.book,
+                  width: 240.w,
+                  height: 240.h,
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
-            if (isFavorite)
-              ElevatedButton(
-                onPressed: () {
-                  NotificationService.scheduleDailyNotification(
-                    id: widget.book.id,
-                    title: 'Kitap Hatırlatma!',
-                    body: '${widget.book.title} kitabını okumayı unutma!',
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Hatırlatma ayarlandı')),
-                  );
-                },
-                child: const Text('Hatırlat'),
-              )
-            else
-              const SizedBox.shrink()
+            const SizedBox(height: 20),
+
+            /// DETAYLAR BLOĞU
+            _buildInfoRow('Yayınevi', book.publisher),
+            _buildInfoRow('Yıl', book.year.toString()),
+            _buildInfoRow('ISBN', book.isbn),
+            _buildInfoRow('Sayfa Sayısı', book.pages.toString()),
+
+            const SizedBox(height: 24),
+
+            /// NOTLAR
+            Text('Notlar', style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 6),
+            ...book.notes.map((e) => _bulletItem(e)),
+
+            const SizedBox(height: 20),
+
+            /// VİLLAİNS
+            Text('Villains', style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 6),
+            ...book.villains.map((e) => _bulletItem(e)),
+
+            SizedBox(height: 30.h),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String title, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        children: [
+          Text(
+            '$title: ',
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          Expanded(
+            child: Text(
+              value,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _bulletItem(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('• ', style: TextStyle(fontSize: 18)),
+          Expanded(child: Text(text)),
+        ],
       ),
     );
   }

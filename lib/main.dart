@@ -1,15 +1,20 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // EKLENDİ
 import 'package:path_provider/path_provider.dart';
+import 'package:readly/application/bottom_nav/bottom_nav_cubit.dart';
+import 'package:readly/application/locale/language_cubit.dart';
 import 'package:readly/application/theme/theme_cubit.dart';
 import 'package:readly/core/notifications/notification_service.dart';
+import 'package:readly/domain/entities/book.dart';
 import 'package:readly/presentation/book_detail_page.dart';
-import 'presentation/books_page.dart';
+import 'package:readly/presentation/books_page.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:readly/domain/entities/book.dart'; // BookAdapter için gerekli
+import 'package:readly/presentation/main_screen.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
@@ -32,14 +37,16 @@ void main() async {
   await Hive.openBox<Book>('favoritesBox');
 
   runApp(
-    MultiBlocProvider(
-      providers: [
-        BlocProvider<ThemeCubit>(create: (_) => ThemeCubit()),
-      ],
-      child: EasyLocalization(
-        supportedLocales: const [Locale('tr'), Locale('en'), Locale('es')],
-        path: 'assets/lang',
-        fallbackLocale: const Locale('tr'),
+    EasyLocalization(
+      supportedLocales: const [Locale('tr'), Locale('en'), Locale('es')],
+      path: 'assets/lang',
+      fallbackLocale: const Locale('tr'),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => ThemeCubit()),
+          BlocProvider(create: (_) => LanguageCubit()),
+          BlocProvider(create: (_) => BottomNavCubit()),
+        ],
         child: const MyApp(),
       ),
     ),
@@ -51,18 +58,29 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ThemeCubit, ThemeMode>(
-      builder: (context, themeMode) {
-        return MaterialApp(
-          navigatorKey: navigatorKey,
-          title: 'Readly',
-          localizationsDelegates: context.localizationDelegates,
-          supportedLocales: context.supportedLocales,
-          locale: context.locale,
-          theme: ThemeData.light(),
-          darkTheme: ThemeData.dark(),
-          themeMode: themeMode,
-          home: const BooksPage(),
+    return ScreenUtilInit(
+      designSize: const Size(390, 844),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (_, __) {
+        return BlocBuilder<LanguageCubit, Locale>(
+          builder: (context, locale) {
+            return BlocBuilder<ThemeCubit, ThemeData>(
+              builder: (context, theme) {
+                return MaterialApp(
+                  navigatorKey: navigatorKey,
+                  debugShowCheckedModeBanner: false,
+                  title: 'Readly',
+                  locale: locale,
+                  supportedLocales: context.supportedLocales,
+                  localizationsDelegates: context.localizationDelegates,
+                  theme: theme,
+                  darkTheme: ThemeData.dark(),
+                  home: const MainScreen(),
+                );
+              },
+            );
+          },
         );
       },
     );

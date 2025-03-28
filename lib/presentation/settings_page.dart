@@ -1,18 +1,158 @@
-// 1. SettingsPage ve LanguageSettingsPage sayfalarını oluştur
-// 2. BooksPage'e ayar butonunu ekle
-
-// --- settings_page.dart ---
 import 'dart:io';
-
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:readly/presentation/language_page.dart';
 import 'package:readly/presentation/theme_settings_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
+
+  @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  String _selectedLanguage = "Türkçe";
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final currentLocale = Localizations.localeOf(context);
+    _selectedLanguage = getLanguageName(currentLocale);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: Text("Ayarlar", style: TextStyle(fontSize: 24.sp)),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Theme.of(context).primaryColor,
+      ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Genel Ayarlar",
+                style: TextStyle(
+                  fontSize: 16.sp,
+                )),
+            SizedBox(height: 12.h),
+            _buildSettingsCard([
+              _buildSettingsTile(
+                title: "Dil Ayarları",
+                icon: Icons.language,
+                value: _selectedLanguage,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const LanguageSettingsPage(),
+                    ),
+                  );
+                },
+              ),
+              _buildSettingsTile(
+                title: "Tema Ayarları",
+                icon: Icons.color_lens,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const ThemeSettingsPage(),
+                    ),
+                  );
+                },
+              ),
+              _buildSettingsTile(
+                title: "Bildirim Ayarları",
+                icon: Icons.notifications_active_outlined,
+                onTap: openNotificationSettings,
+              ),
+            ]),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSettingsCard(List<Widget> children) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).primaryColor,
+        borderRadius: BorderRadius.circular(12.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12.withOpacity(0.05),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        children: List.generate(children.length * 2 - 1, (i) {
+          if (i.isEven) return children[i ~/ 2];
+          return Divider(height: 1, color: Colors.grey.shade300);
+        }),
+      ),
+    );
+  }
+
+  Widget _buildSettingsTile({
+    required String title,
+    required IconData icon,
+    VoidCallback? onTap,
+    String? value,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12.r),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+        child: Row(
+          children: [
+            Icon(icon, color: Colors.blueAccent, size: 22.sp),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            if (value != null)
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 13.sp,
+                ),
+              ),
+            const Icon(Icons.arrow_forward_ios_rounded, size: 14),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String getLanguageName(Locale locale) {
+    switch (locale.languageCode) {
+      case 'tr':
+        return 'Türkçe';
+      case 'en':
+        return 'English';
+      case 'es':
+        return 'Español';
+      default:
+        return 'Bilinmiyor';
+    }
+  }
 
   Future<void> openNotificationSettings() async {
     if (Platform.isAndroid) {
@@ -26,48 +166,10 @@ class SettingsPage extends StatelessWidget {
       try {
         await intent.launch();
       } on PlatformException catch (e) {
-        debugPrint('❌ Android intent error: $e');
+        debugPrint('Android intent error: $e');
       }
     } else if (Platform.isIOS) {
-      // iOS 10+ için direkt ayarlar sayfasına yönlendirebiliriz
-      // Ama bildirim ayarlarının olduğu yere tam gitmek mümkün değil.
       await launchUrl(Uri.parse('app-settings:'));
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Ayarlar')),
-      body: ListView(
-        children: [
-          ListTile(
-            title: const Text('Dil Ayarları'),
-            leading: const Icon(Icons.language),
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const LanguageSettingsPage()),
-            ),
-          ),
-          const Divider(),
-          ListTile(
-            title: const Text('Tema Ayarları'),
-            leading: const Icon(Icons.color_lens),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const ThemeSettingsPage()),
-              );
-            },
-          ),
-          const Divider(),
-          ListTile(
-            title: const Text('Bildirim Ayarları'),
-            leading: const Icon(Icons.notifications_active),
-            onTap: openNotificationSettings,
-          ),
-        ],
-      ),
-    );
   }
 }

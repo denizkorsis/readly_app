@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:readly/core/theme/light_theme.dart';
+import 'package:readly/core/theme/dark_theme.dart';
 
-class ThemeCubit extends Cubit<ThemeMode> {
-  ThemeCubit() : super(ThemeMode.system);
+class ThemeCubit extends Cubit<ThemeData> {
+  ThemeCubit() : super(LightTheme().themeData);
 
-  void setLightTheme() => emit(ThemeMode.light);
-  void setDarkTheme() => emit(ThemeMode.dark);
-  void setSystemTheme() => emit(ThemeMode.system);
+  void setLightTheme() => emit(LightTheme().themeData);
+  void setDarkTheme() => emit(DarkTheme().themeData);
 }

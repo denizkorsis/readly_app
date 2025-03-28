@@ -1,5 +1,6 @@
 {
     "title": "Libros",
     "add_to_favorites": "Agregar a Favoritos",
-    "remove_from_favorites": "Quitar de Favoritos"
+    "remove_from_favorites": "Quitar de Favoritos",
+    "search_books": "Buscar libro"
 }

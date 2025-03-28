@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive/hive.dart';
+import 'package:readly/application/bottom_nav/bottom_nav_cubit.dart';
 import 'package:readly/domain/entities/book.dart';
+import 'package:readly/presentation/widgets/book_card.dart';
+import 'package:readly/presentation/widgets/custom_app_bar.dart';
+import 'package:readly/presentation/widgets/custom_bottom_nav_bar.dart';
 import 'book_detail_page.dart';
 
 class FavoritesPage extends StatefulWidget {
@@ -12,6 +18,7 @@ class FavoritesPage extends StatefulWidget {
 
 class _FavoritesPageState extends State<FavoritesPage> {
   late Box<Book> favoritesBox;
+  int selectedIndex = 1;
 
   @override
   void initState() {
@@ -21,52 +28,64 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Book.id'ye göre benzersiz favori kitapları listele
     final uniqueFavorites = <int, Book>{
       for (var book in favoritesBox.values) book.id: book
     }.values.toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Favori Kitaplar')),
-      body: uniqueFavorites.isEmpty
-          ? const Center(child: Text('Henüz favori kitap yok.'))
-          : ListView.builder(
-              itemCount: uniqueFavorites.length,
-              itemBuilder: (context, index) {
-                final book = uniqueFavorites[index];
-                return ListTile(
-                  title: Text(book.title),
-                  subtitle: Text('${book.year} - ${book.publisher}'),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete_outline),
-                    onPressed: () async {
-                      // Tüm box'tan bu ID'ye ait tüm kayıtları kaldır
-                      final matching = favoritesBox.values
-                          .where((b) => b.id == book.id)
-                          .toList();
-                      for (var item in matching) {
-                        await item.delete();
-                      }
-
-                      setState(() {}); // Sayfayı yenile
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            content:
-                                Text('${book.title} favorilerden silindi')),
-                      );
-                    },
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => BookDetailPage(book: book),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: Column(
+        children: [
+          const CustomAppBar(
+            title: 'Favoriler',
+          ),
+          Expanded(
+            child: uniqueFavorites.isEmpty
+                ? const Center(child: Text('Henüz favori kitap yok.'))
+                : Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    child: GridView.builder(
+                      padding: EdgeInsets.only(top: 16.h),
+                      itemCount: uniqueFavorites.length,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 16.w,
+                        mainAxisSpacing: 16.h,
+                        childAspectRatio: 0.68,
                       ),
-                    );
-                  },
-                );
-              },
-            ),
+                      itemBuilder: (context, index) {
+                        final book = uniqueFavorites[index];
+                        return BookCard(
+                          book: book,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => BookDetailPage(book: book),
+                              ),
+                            );
+                          },
+                          onDelete: () async {
+                            final matching = favoritesBox.values
+                                .where((b) => b.id == book.id)
+                                .toList();
+                            for (var item in matching) {
+                              await item.delete();
+                            }
+                            setState(() {});
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text(
+                                      '${book.title} favorilerden silindi')),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+          ),
+        ],
+      ),
     );
   }
 }
