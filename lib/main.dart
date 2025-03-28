@@ -71,7 +71,7 @@ class MyApp extends StatelessWidget {
                   navigatorKey: navigatorKey,
                   debugShowCheckedModeBanner: false,
                   title: 'Readly',
-                  locale: locale,
+                  locale: context.locale,
                   supportedLocales: context.supportedLocales,
                   localizationsDelegates: context.localizationDelegates,
                   theme: theme,

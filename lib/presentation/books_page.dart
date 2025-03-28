@@ -28,8 +28,8 @@ class BooksPage extends StatelessWidget {
             backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             body: Column(
               children: [
-                const CustomAppBar(
-                  title: 'Kitaplar',
+                CustomAppBar(
+                  title: LocaleKeys.books.locale,
                 ),
                 Padding(
                   padding: EdgeInsets.all(12.r),

@@ -17,7 +17,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  String _selectedLanguage = "Türkçe";
+  late String _selectedLanguage;
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
