@@ -3,7 +3,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:readly/application/locale/language_cubit.dart';
+import 'package:readly/core/l10n/locale_keys.g.dart';
 import 'package:readly/core/theme/colors.dart';
+import 'package:readly/core/utils/extensions/locale_extension.dart';
 
 class LanguageSettingsPage extends StatefulWidget {
   const LanguageSettingsPage({super.key});
@@ -35,7 +37,7 @@ class _LanguageSettingsPageState extends State<LanguageSettingsPage> {
         backgroundColor: Theme.of(context).primaryColor,
         elevation: 0,
         title: Text(
-          'Dil Seçimi',
+          LocaleKeys.language_selection.locale,
           style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -47,7 +49,7 @@ class _LanguageSettingsPageState extends State<LanguageSettingsPage> {
           children: [
             SizedBox(height: 16.h),
             Text(
-              "Lütfen bir dil seçin",
+              LocaleKeys.please_select_language.locale,
               style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 12.h),
@@ -130,7 +132,7 @@ class _LanguageSettingsPageState extends State<LanguageSettingsPage> {
                   Navigator.pop(context, true);
                 },
                 child: Text(
-                  'Kaydet',
+                  LocaleKeys.save.locale,
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.bold,

@@ -2,19 +2,20 @@ import 'package:dio/dio.dart';
 import '../models/book_model.dart';
 
 class BookApiService {
-  final Dio _dio = Dio(
-    BaseOptions(
-      baseUrl: 'https://stephen-king-api.onrender.com/api',
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10),
-      responseType: ResponseType.json,
-    ),
-  );
+  final Dio _dio;
+
+  BookApiService({Dio? dio})
+      : _dio = dio ??
+            Dio(BaseOptions(
+              baseUrl: 'https://stephen-king-api.onrender.com/api',
+              connectTimeout: const Duration(seconds: 10),
+              receiveTimeout: const Duration(seconds: 10),
+              responseType: ResponseType.json,
+            ));
 
   Future<List<BookModel>> fetchBooks() async {
     try {
       final response = await _dio.get('/books');
-
       final data = response.data as Map<String, dynamic>;
       final List<dynamic> booksJson = data['data'] as List<dynamic>;
       return booksJson

@@ -3,9 +3,11 @@ import 'package:android_intent_plus/android_intent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:readly/core/l10n/locale_keys.g.dart';
 import 'package:readly/presentation/language_page.dart';
 import 'package:readly/presentation/theme_settings_page.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:readly/core/utils/extensions/locale_extension.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -28,7 +30,8 @@ class _SettingsPageState extends State<SettingsPage> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: Text("Ayarlar", style: TextStyle(fontSize: 24.sp)),
+        title:
+            Text(LocaleKeys.settings.locale, style: TextStyle(fontSize: 24.sp)),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Theme.of(context).primaryColor,
@@ -38,14 +41,14 @@ class _SettingsPageState extends State<SettingsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Genel Ayarlar",
+            Text(LocaleKeys.general_settings.locale,
                 style: TextStyle(
                   fontSize: 16.sp,
                 )),
             SizedBox(height: 12.h),
             _buildSettingsCard([
               _buildSettingsTile(
-                title: "Dil Ayarları",
+                title: LocaleKeys.language_settings.locale,
                 icon: Icons.language,
                 value: _selectedLanguage,
                 onTap: () {
@@ -58,7 +61,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 },
               ),
               _buildSettingsTile(
-                title: "Tema Ayarları",
+                title: LocaleKeys.theme_settings.locale,
                 icon: Icons.color_lens,
                 onTap: () {
                   Navigator.push(
@@ -70,7 +73,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 },
               ),
               _buildSettingsTile(
-                title: "Bildirim Ayarları",
+                title: LocaleKeys.notification_settings.locale,
                 icon: Icons.notifications_active_outlined,
                 onTap: openNotificationSettings,
               ),

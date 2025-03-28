@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:readly/application/theme/theme_cubit.dart';
+import 'package:readly/core/l10n/locale_keys.g.dart';
+import 'package:readly/core/utils/extensions/locale_extension.dart';
 
 class ThemeSettingsPage extends StatelessWidget {
   const ThemeSettingsPage({super.key});
@@ -15,7 +17,7 @@ class ThemeSettingsPage extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          'Tema Ayarları',
+          LocaleKeys.theme_settings.locale,
           style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
         ),
       ),
@@ -25,7 +27,7 @@ class ThemeSettingsPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Tema Seçimi",
+              LocaleKeys.theme_selection.locale,
               style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
             ),
             SizedBox(height: 12.h),
@@ -35,14 +37,14 @@ class ThemeSettingsPage extends StatelessWidget {
                 _buildThemeTile(
                   context,
                   icon: Icons.light_mode,
-                  label: 'Açık Tema',
+                  label: LocaleKeys.light_theme.locale,
                   onTap: () => context.read<ThemeCubit>().setLightTheme(),
                 ),
                 _divider(),
                 _buildThemeTile(
                   context,
                   icon: Icons.dark_mode,
-                  label: 'Koyu Tema',
+                  label: LocaleKeys.dark_theme.locale,
                   onTap: () => context.read<ThemeCubit>().setDarkTheme(),
                 ),
               ],

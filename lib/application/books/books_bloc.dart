@@ -1,9 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
+import 'package:readly/core/l10n/locale_keys.g.dart';
 import 'package:readly/domain/repositories/book_repository.dart';
 import 'package:readly/domain/entities/book.dart';
 import 'books_event.dart';
 import 'books_state.dart';
+import 'package:readly/core/utils/extensions/locale_extension.dart';
 
 class BooksBloc extends Bloc<BooksEvent, BooksState> {
   final BookRepository repository;
@@ -37,7 +39,7 @@ class BooksBloc extends Bloc<BooksEvent, BooksState> {
         if (cachedBooks.isNotEmpty) {
           emit(BooksLoaded(cachedBooks));
         } else {
-          emit(BooksError('Kitaplar yüklenemedi: $e'));
+          emit(BooksError('${LocaleKeys.books_load_error.locale} $e'));
         }
       }
     });

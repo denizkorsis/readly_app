@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:readly/core/l10n/locale_keys.g.dart';
+import 'package:readly/core/utils/extensions/locale_extension.dart';
 
 class CustomBottomNavigationBar extends StatelessWidget {
   final int selectedIndex;
@@ -35,21 +36,21 @@ class CustomBottomNavigationBar extends StatelessWidget {
               _buildBarItem(
                 context: context,
                 icon: Icons.book_outlined,
-                label: "Kitaplar",
+                label: LocaleKeys.books.locale,
                 isSelected: selectedIndex == 0,
                 onTap: () => onTap(0),
               ),
               _buildBarItem(
                 context: context,
                 icon: Icons.favorite_border,
-                label: "Favoriler",
+                label: LocaleKeys.favorites.locale,
                 isSelected: selectedIndex == 1,
                 onTap: () => onTap(1),
               ),
               _buildBarItem(
                 context: context,
                 icon: Icons.settings,
-                label: "Ayarlar",
+                label: LocaleKeys.settings.locale,
                 isSelected: selectedIndex == 2,
                 onTap: () => onTap(2),
               ),

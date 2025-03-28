@@ -3,11 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive/hive.dart';
 import 'package:readly/application/bottom_nav/bottom_nav_cubit.dart';
+import 'package:readly/core/l10n/locale_keys.g.dart';
 import 'package:readly/domain/entities/book.dart';
 import 'package:readly/presentation/widgets/book_card.dart';
 import 'package:readly/presentation/widgets/custom_app_bar.dart';
 import 'package:readly/presentation/widgets/custom_bottom_nav_bar.dart';
 import 'book_detail_page.dart';
+import 'package:readly/core/utils/extensions/locale_extension.dart';
 
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
@@ -36,12 +38,12 @@ class _FavoritesPageState extends State<FavoritesPage> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Column(
         children: [
-          const CustomAppBar(
-            title: 'Favoriler',
+          CustomAppBar(
+            title: LocaleKeys.favorites.locale,
           ),
           Expanded(
             child: uniqueFavorites.isEmpty
-                ? const Center(child: Text('Henüz favori kitap yok.'))
+                ? Center(child: Text(LocaleKeys.no_favorites.locale))
                 : Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.w),
                     child: GridView.builder(
@@ -73,11 +75,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
                               await item.delete();
                             }
                             setState(() {});
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                  content: Text(
-                                      '${book.title} favorilerden silindi')),
-                            );
                           },
                         );
                       },
