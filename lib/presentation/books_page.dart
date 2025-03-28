@@ -61,7 +61,7 @@ class BooksPage extends StatelessWidget {
                         return const Center(child: CircularProgressIndicator());
                       } else if (state is BooksLoaded) {
                         return GridView.builder(
-                          padding: const EdgeInsets.all(12),
+                          padding: EdgeInsets.all(12.r),
                           itemCount: state.books.length,
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(

@@ -12,6 +12,7 @@ import 'package:readly/presentation/book_detail_page.dart';
 import 'package:readly/presentation/books_page.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:readly/presentation/main_screen.dart';
+import 'package:readly/presentation/splash_page.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -76,7 +77,7 @@ class MyApp extends StatelessWidget {
                   localizationsDelegates: context.localizationDelegates,
                   theme: theme,
                   darkTheme: ThemeData.dark(),
-                  home: const MainScreen(),
+                  home: const SplashScreen(),
                 );
               },
             );

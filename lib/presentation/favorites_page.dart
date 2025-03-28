@@ -44,41 +44,39 @@ class _FavoritesPageState extends State<FavoritesPage> {
           Expanded(
             child: uniqueFavorites.isEmpty
                 ? Center(child: Text(LocaleKeys.no_favorites.locale))
-                : Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    child: GridView.builder(
-                      padding: EdgeInsets.only(top: 16.h),
-                      itemCount: uniqueFavorites.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 16.w,
-                        mainAxisSpacing: 16.h,
-                        childAspectRatio: 0.68,
-                      ),
-                      itemBuilder: (context, index) {
-                        final book = uniqueFavorites[index];
-                        return BookCard(
-                          book: book,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => BookDetailPage(book: book),
-                              ),
-                            );
-                          },
-                          onDelete: () async {
-                            final matching = favoritesBox.values
-                                .where((b) => b.id == book.id)
-                                .toList();
-                            for (var item in matching) {
-                              await item.delete();
-                            }
-                            setState(() {});
-                          },
-                        );
-                      },
+                : GridView.builder(
+                    padding: EdgeInsets.all(12.r),
+                    itemCount: uniqueFavorites.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: 0.75,
                     ),
+                    itemBuilder: (context, index) {
+                      final book = uniqueFavorites[index];
+                      return BookCard(
+                        book: book,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => BookDetailPage(book: book),
+                            ),
+                          );
+                        },
+                        onDelete: () async {
+                          final matching = favoritesBox.values
+                              .where((b) => b.id == book.id)
+                              .toList();
+                          for (var item in matching) {
+                            await item.delete();
+                          }
+                          setState(() {});
+                        },
+                      );
+                    },
                   ),
           ),
         ],
