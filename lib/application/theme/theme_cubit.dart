@@ -4,7 +4,8 @@ import 'package:readly/core/theme/light_theme.dart';
 import 'package:readly/core/theme/dark_theme.dart';
 
 class ThemeCubit extends Cubit<ThemeData> {
-  ThemeCubit() : super(LightTheme().themeData);
+  ThemeCubit({ThemeData? initialTheme})
+      : super(initialTheme ?? LightTheme().themeData);
 
   void setLightTheme() => emit(LightTheme().themeData);
   void setDarkTheme() => emit(DarkTheme().themeData);

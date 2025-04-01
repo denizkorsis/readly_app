@@ -128,7 +128,6 @@ class _BookCardState extends State<BookCard> {
                   ),
                   Row(
                     children: [
-                      /// Favori butonu
                       IconButton(
                         icon: Icon(
                           isFavorite ? Icons.favorite : Icons.favorite_border,
@@ -139,8 +138,6 @@ class _BookCardState extends State<BookCard> {
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                       ),
-
-                      /// Silme varsa onu da göster
                       if (widget.onDelete != null)
                         IconButton(
                           icon: Icon(

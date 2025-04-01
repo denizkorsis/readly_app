@@ -3,7 +3,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest_all.dart' as tz;
 
 class NotificationService {
-  static final FlutterLocalNotificationsPlugin _notificationsPlugin =
+  static FlutterLocalNotificationsPlugin notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
   static Future<void> init({
@@ -29,12 +29,12 @@ class NotificationService {
       description: 'Daily reminder notification',
       importance: Importance.max,
     );
-    await _notificationsPlugin
+    await notificationsPlugin
         .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(androidChannel);
 
-    await _notificationsPlugin.initialize(
+    await notificationsPlugin.initialize(
       initSettings,
       onDidReceiveNotificationResponse: (details) {
         if (details.payload != null) {
@@ -66,7 +66,7 @@ class NotificationService {
       ),
     );
 
-    await _notificationsPlugin.show(id, title, body, notificationDetails);
+    await notificationsPlugin.show(id, title, body, notificationDetails);
   }
 
   static Future<void> scheduleDailyNotification({
@@ -116,7 +116,7 @@ class NotificationService {
       iOS: iosDetails,
     );
 
-    await _notificationsPlugin.zonedSchedule(
+    await notificationsPlugin.zonedSchedule(
       id,
       title,
       body,

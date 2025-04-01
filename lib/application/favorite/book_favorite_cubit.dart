@@ -2,9 +2,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:readly/domain/entities/book.dart';
 
-class BookFavoriteState {
+import 'package:equatable/equatable.dart';
+
+class BookFavoriteState extends Equatable {
   final bool isFavorite;
+
   const BookFavoriteState({required this.isFavorite});
+
+  @override
+  List<Object?> get props => [isFavorite];
 }
 
 class BookFavoriteCubit extends Cubit<BookFavoriteState> {
@@ -18,9 +24,12 @@ class BookFavoriteCubit extends Cubit<BookFavoriteState> {
   void toggleFavorite() {
     final isFav = favoritesBox.values.any((b) => b.id == book.id);
     if (isFav) {
-      final toRemove = favoritesBox.values.firstWhere((b) => b.id == book.id);
-      toRemove.delete();
-      emit(BookFavoriteState(isFavorite: false));
+      final index =
+          favoritesBox.values.toList().indexWhere((b) => b.id == book.id);
+      if (index != -1) {
+        favoritesBox.deleteAt(index);
+        emit(BookFavoriteState(isFavorite: false));
+      }
     } else {
       final copiedBook = Book(
         id: book.id,

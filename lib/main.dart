@@ -9,9 +9,7 @@ import 'package:readly/application/theme/theme_cubit.dart';
 import 'package:readly/core/notifications/notification_service.dart';
 import 'package:readly/domain/entities/book.dart';
 import 'package:readly/presentation/book_detail_page.dart';
-import 'package:readly/presentation/books_page.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:readly/presentation/main_screen.dart';
 import 'package:readly/presentation/splash_page.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

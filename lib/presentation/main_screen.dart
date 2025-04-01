@@ -13,7 +13,6 @@ class MainScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<BottomNavCubit, int>(
       builder: (context, selectedIndex) {
-        // index'e göre gösterilecek sayfa
         final pages = [
           const BooksPage(),
           const FavoritesPage(),

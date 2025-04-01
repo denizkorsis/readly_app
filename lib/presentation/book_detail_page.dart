@@ -73,6 +73,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
                       title: LocaleKeys.book_reminder.locale,
                       body: '${book.title} ${LocaleKeys.reminder_body.locale}',
                     );
+                    //Bildirim gönderdiğini test edebilmek için koydum.
                     NotificationService.showNotification(
                       id: book.id,
                       title: LocaleKeys.book_reminder.locale,
@@ -104,16 +105,11 @@ class _BookDetailPageState extends State<BookDetailPage> {
                 ),
               ),
               SizedBox(height: 20.h),
-
-              /// DETAYLAR BLOĞU
               _buildInfoRow(LocaleKeys.publisher.locale, book.publisher),
               _buildInfoRow(LocaleKeys.year.locale, book.year.toString()),
               _buildInfoRow('ISBN', book.isbn),
               _buildInfoRow(LocaleKeys.pages.locale, book.pages.toString()),
-
               const SizedBox(height: 24),
-
-              /// NOTLAR
               Text(LocaleKeys.notes.locale,
                   style: Theme.of(context).textTheme.titleMedium),
               SizedBox(height: 10.h),
@@ -122,10 +118,7 @@ class _BookDetailPageState extends State<BookDetailPage> {
                 runSpacing: 8,
                 children: book.notes.map((note) => _tagBox(note)).toList(),
               ),
-
               SizedBox(height: 24.h),
-
-              /// VİLLAİNS
               Text('Villains', style: Theme.of(context).textTheme.titleMedium),
               SizedBox(height: 10.h),
               Wrap(
@@ -135,7 +128,6 @@ class _BookDetailPageState extends State<BookDetailPage> {
                     .map((v) => _tagBox(v, icon: Icons.person))
                     .toList(),
               ),
-
               SizedBox(height: 30.h),
             ],
           ),

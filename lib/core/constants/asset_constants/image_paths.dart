@@ -8,5 +8,5 @@ final class ImagePaths {
   static const String base = "assets/images";
   static const String book = "$base/book.png";
   static const String delete = "$base/delete.png";
-  static const String gif = "$base/gif.png";
+  static const String gif = "$base/gif.gif";
 }
