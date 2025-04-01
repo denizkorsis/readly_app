@@ -27,6 +27,7 @@ final class LightTheme implements CustomTheme {
         elevatedButtonTheme: elevatedButtonThemeData,
         outlinedButtonTheme: outlinedButtonThemeData,
         inputDecorationTheme: inputDecorationTheme,
+        snackBarTheme: snackBarTheme,
         textButtonTheme: textButtonThemeData,
         dialogTheme: dialogTheme,
         cardTheme: cardTheme,
@@ -79,6 +80,23 @@ final class LightTheme implements CustomTheme {
           color: AppColors.textBlack,
           fontSize: 20.spMin,
           fontWeight: CustomFontWeight.semiBold.weight,
+        ),
+      );
+  @override
+  SnackBarThemeData get snackBarTheme => SnackBarThemeData(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.r),
+        ),
+        behavior: SnackBarBehavior.floating,
+        elevation: 5,
+        showCloseIcon: true,
+        closeIconColor: AppColors.white,
+        insetPadding: EdgeInsets.symmetric(horizontal: 12.h, vertical: 32.r),
+        contentTextStyle: TextStyle(
+          fontFamily: FontFamily.poppins.family,
+          fontWeight: CustomFontWeight.medium.weight,
+          color: AppColors.white,
+          fontSize: 14.spMin,
         ),
       );
 

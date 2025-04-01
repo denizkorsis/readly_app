@@ -440,6 +440,7 @@ final class DarkTheme implements CustomTheme {
 
   @override
   SnackBarThemeData get snackBarTheme => SnackBarThemeData(
+        backgroundColor: AppColors.black,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.r),
         ),

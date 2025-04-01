@@ -51,6 +51,8 @@ abstract class CustomTheme {
 
   DividerThemeData get dividerTheme;
 
+  SnackBarThemeData get snackBarTheme;
+
   TextStyle get bottomNavBarStyle;
 
   TextStyle get displayLarge;
